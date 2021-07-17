@@ -25,6 +25,21 @@ public class Main {
         return new Record("", "", "");
     }
 
+    public static Record getFillRecord() {
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("input phone number: ");
+        String tel = input.nextLine();
+
+        System.out.print("input name: ");
+        String name = input.nextLine();
+
+        System.out.print("input description: ");
+        String descr = input.nextLine();
+
+        return new Record(tel, name, descr);
+    }
+
     public static void clearArray(Record[] array) {
         for (int i = 0; i < array.length; i++) {
             array[i] = getEmptyRecord();
@@ -41,31 +56,31 @@ public class Main {
 
     public static Record getElement(Record[] array, int index) throws Exception {
         if (index < 0 || index > array.length - 1) {
-            throw new Exception("Выход за границы массивы");
+            throw new Exception("Выход за границы массива");
         }
 
         return array[index];
     }
 
-    public static void PrintSingleRecord(Record value) {
-        System.out.printf("tel:%s name:%s descr:%s", value.PhoneNumber, value.PersonName, value.Description);
+    public static void printSingleRecord(Record value) {
+        System.out.printf("tel:%s name:%s descr:%s\n", value.PhoneNumber, value.PersonName, value.Description);
     }
 
-    public static void PrintAllRecordsAsTable(Record[] array) {
-        if(array==null){
+    public static void printAllRecordsAsTable(Record[] array) {
+        if (array == null) {
             System.out.println("list is empty");
             System.out.println("-------");
             return;
         }
 
-        System.out.printf("%-4s%-14%-12s%s\n", "#", "tel", "name", "description");
+        System.out.printf("%-4s%-14s%-12s%s\n", "#", "tel", "name", "description");
         for (int i = 0; i < array.length; i++) {
-            System.out.printf("%-4s%-14%-12s%s\n", i, array[i].PhoneNumber, array[i].PersonName, array[i].Description);
+            System.out.printf("%-4s%-14s%-12s%s\n", i, array[i].PhoneNumber, array[i].PersonName, array[i].Description);
         }
         System.out.println("-------");
     }
 
-    public static void SeedArray(Record[] array) {
+    public static void seedArray(Record[] array) {
 
         Random random = new Random();
 
@@ -85,24 +100,89 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    public static void printRecordsByPhoneNumber(Record[] array, String partOfPhoneNumber) {
+        System.out.printf("%-4s%-14s%-12s%s\n", "#", "tel", "name", "description");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].PhoneNumber.contains(partOfPhoneNumber))
+                System.out.printf("%-4s%-14s%-12s%s\n", i, array[i].PhoneNumber, array[i].PersonName, array[i].Description);
+        }
+        System.out.println("-------");
+    }
+
+    public static void main(String[] args) throws Exception {
         Scanner input = new Scanner(System.in);
 
         int action = -1;
         boolean isRun = true;
         Record[] array = null;
 
-        while (isRun){
-
+        while (isRun) {
+            printAllRecordsAsTable(array);
 
             System.out.println("Меню:");
-            System.out.println("1. Создать записную книжку");
-            System.out.println("2. Обнулить записную книжку");
-            System.out.println("3. Заполнить массив случайными значениями");
-            System.out.println("5. Добавить элемент в конец массива");
-            System.out.println("6. Добавить элемент в указанный индекс");
-            System.out.println("7. Удалить элемент по указанному индексу");
+            System.out.println("1. Создать и обнулить записную книжку");
+            System.out.println("2. Заполнить записную книжку случайными данными");
+            System.out.println("3. Вывести человека по индексу");
+            System.out.println("4. Задать новые данные человека по индексу");
+            System.out.println("5. Поиск по части номера телефона");
             System.out.println("0. Выход");
+
+            System.out.print("Введите номер пункта меню: ");
+            action = input.nextInt();
+
+            switch (action) {
+                case 1: {
+                    System.out.print("Введите количество людей в запискной книжке: ");
+                    int count = input.nextInt();
+
+                    array = createArray(count);
+
+                    clearArray(array);
+                }
+                break;
+
+                case 2: {
+                    seedArray(array);
+                }
+                break;
+
+                case 3: {
+                    System.out.print("Введите индекс человека: ");
+                    int index = input.nextInt();
+
+                    printSingleRecord(getElement(array, index));
+                }
+                break;
+
+                case 4: {
+                    System.out.print("Введите индекс человека: ");
+                    int index = input.nextInt();
+
+                    Record record = getFillRecord();
+
+                    setElement(array, index, record);
+                }
+                break;
+
+                case 5: {
+                    System.out.print("Введите часть номера телефона: ");
+                    input.nextLine();
+                    String partOfPhoneNumber = input.nextLine();
+
+                    printRecordsByPhoneNumber(array, partOfPhoneNumber);
+                }
+                break;
+
+                case 0: {
+                    isRun = false;
+                }
+                break;
+
+                default: {
+                    System.out.println("Ошибка. Такой команды не существует");
+                }
+                break;
+            }
         }
     }
 }
